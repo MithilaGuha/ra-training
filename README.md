@@ -1,6 +1,18 @@
 Research Assistant Training
 ================
 
+## To Do
+
+  - Add details from the last training.
+  - Figure out use of branches.
+      - Permissions?
+      - Push/pull issues?
+  - Decide on organization or repos (data and size limits).
+  - Create and clone all projects.
+  - Migrate to R Markdown.
+  - Update issues for each project.
+  - Flesh out details for this training conditioned on the above.
+
 ## Project-Oriented Workflow
 
   - Using RStudio projects.
