@@ -3,6 +3,8 @@ title: "Research Assistant Training"
 output: github_document
 ---
 
+So I can change the branch itself?
+
 ## To Do
 
 * Add details from the last training.
