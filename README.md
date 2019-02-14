@@ -1,6 +1,8 @@
 Research Assistant Training
 ================
 
+So I can change the branch itself?
+
 ## To Do
 
   - Add details from the last training.
@@ -33,6 +35,10 @@ Research Assistant Training
   - push
   - branch (?)
   - pull request
+
+## Advanced Topics
+
+  - .gitignore (see example)
 
 ## Links
 
