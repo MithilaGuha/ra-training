@@ -1,11 +1,10 @@
 Research Assistant Training
 ================
 
-So I can change the branch itself?
-
 ## To Do
 
-  - Add details from the last training.
+  - Add details from the last training
+    [set-up](https://happygitwithr.com/workshops.html?mkt_tok=eyJpIjoiT1RVelptVTNZams0T0dZMiIsInQiOiJlR0orVlVpaHZsRlwveWh5QUJPN2U1Q3BcL0pHVHo5RXJ5UkhabFlwVXM4NlEwcHhRTENQZmVxaEEyNnVLSkRFTTdVa0hyNjk4MkFHYUU1Nkt5VXNtRm9heFM3N3dnUFplZ1V5anpRTWdnWDVscE1lOUR6VzBHaGFQOUFhOGd1QkN3In0=#pre-workshop-set-up).
   - Figure out use of branches.
       - Permissions?
       - Push/pull issues?
