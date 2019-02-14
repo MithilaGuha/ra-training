@@ -1,2 +1,28 @@
-# ra-training
-Training walkthrough for new research assistants.
+Research Assistant Training
+================
+
+## Project-Oriented Workflow
+
+  - Using RStudio projects.
+  - Safe paths (use the `here` package).
+  - Beware monoliths (file naming, separate scripts like separate
+    functions).
+  - Naming conventions (slugs).
+  - Use `output: github_document` in the YAML of R Markdown documents.
+  - Discuss the use of *branches*.
+
+## Vocabulary
+
+  - repo
+  - clone
+  - fork
+  - committ
+  - pull
+  - push
+  - branch (?)
+  - pull request
+
+## Links
+
+  - WTF Workshop (repo)
+  - All the links shared in the workshop
