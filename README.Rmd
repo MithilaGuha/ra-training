@@ -35,6 +35,10 @@ output: github_document
 * branch (?)
 * pull request
 
+## Advanced Topics
+
+* .gitignore (see example)
+
 ## Links
 
 * WTF Workshop (repo)

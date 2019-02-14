@@ -1,0 +1,41 @@
+# Temporarily ignore data and output
+Output/*
+Data/data_clean/*.rds
+Data/data_export/*
+lib/Hurdle*
+# Site output
+_site/*
+site_libs/*
+# knitr and caching stuff
+*_files/*
+*_cache/*
+# Analysis output
+index.html
+Analysis/**/*.html
+Analysis/**/*_files/*
+Analysis/**/*_cache/*
+Data/**/*.html
+Data/**/*_files/*
+Data/**/*_cache/*
+# Manuscript output
+Writing/**/*.docx
+Writing/**/*.html
+Writing/**/*.pdf
+Writing/**/*.tex
+Writing/Manuscript/tex_out/*
+Writing/Manuscript/vc*
+Writing/Feedback*
+# Other folders
+Sandbox/*
+Presentations/*
+Miscellaneous/*
+Readings/*
+# R stuff
+.Rproj.user
+.Rhistory
+.RData
+# Miscellaneous
+*.~lock.*
+.DS_Store
+.dropbox
+Icon?
