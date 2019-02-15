@@ -23,8 +23,9 @@ automatically archived.
 
 ### Writing
 
-It is essential that we document what we’re doing in each project as we
-do it. This is true for a number of reasons.
+Think of using GitHub to collaborate on writing like using something
+like Google Docs. It is essential that we document what we’re doing in
+each project as we do it. This is true for a number of reasons.
 
 1.  Writing forces you to think clearly about what you’re doing.
 2.  If you’re writing code, think of writing as long-form comments.
@@ -49,7 +50,7 @@ developers. While we aren’t developing software, we will be importing,
 wrangling, visualizing, and modeling data, and it’s going to be
 essential for everyone to be on the same page. Even if you were just
 working solo, you will be collaborating with your past self and you
-should do yourself a favor and impose version controls.
+should do yourself a favor and impose good version controls.
 
 ### Set-Up
 
@@ -61,48 +62,75 @@ This can take up to a few hours, so plan accordingly.
 
 Now that you’re set up, let’s get started.
 
-### Clone
+### Just Once: Clone
 
-![](Figures/clone.png%20=200x) You **clone** one of your existing repos
-by creating a copy of it
+First **clone** one of your repos. This is simply creating a local copy
+of the repo. You do this inside RStudio by creating a new project and
+selecting `Version Control > Git`.
 
-### Vocabulary
+![](Figures/clone.png)
 
-  - clone
-  - fork
-  - commit
-  - diff
-  - pull
-  - push
-  - branch (?)
-  - pull request
+### Daily Work: Commit, Push, Pull
 
-## To Do
+Now you can open up the RStudio Project in the clone and work on the
+project. You have a new Git pane in RStudio that notifies you that
+changes you’ve made means you are out-of-sync with the repo. Once you’ve
+made a number of changes, you click on the files you want to **commit**
+and click commit. Think of a **commit** as saving a snapshot of all of
+the changes you’ve made across these files all at once. Include a clear
+commit message. You’ll do this fairly frequently, possibly just
+**amending** the same commit each time.
 
-  - Figure out use of branches.
-      - Permissions?
-      - Push/pull issues?
-  - Decide on organization or repos (data and size limits).
+Eventually you’ll be ready for other people to have access to your
+changes on the repo. To do this, you’ll click on the green up arrow to
+**push** your changes to the repo. You push far less often than you
+commit, maybe once a work session, since this means you think it’s ready
+for others to have access to. Each time you push, all of your commits
+are archived, including the **diff** or the side-by-side comparison of
+what changes you made to the previous version.
+
+When you start a new work session, you’ll want to click on the blue down
+arrow to **pull** the latest changes from the repo, possibly the work
+other collaborators have pushed, so you’re synced.
+
+![](Figures/daily-work.png)
+
+### Collaborating: Branches and Pull Requests
+
+Because GitHub is very systematic in the way it manages commits, we will
+run into commit errors when multiple people have changed the same thing
+at the same time. To avoid this problem, we will be using **branches**.
+A branch is a separate version of the repo that exists in parallel, one
+where you can make big changes or experiment without it affecting the
+repo master.
+
+I’ll create the branches. When you work, make sure you select the branch
+you want to work on from the dropdown in the Git pane in RStudio. You
+can commit, push, and pull as usual to the branch you’re working on.
+When you’re *really* done with a big task associated with the branch,
+more so than even a push, you can create a **pull request** on GitHub
+and tag me (i.e., `@marcdotson`). This allows me to review what you’ve
+done, have a conversation with you about it, and then pull what you’ve
+done into the repo master.
+
+## Project Organization
+
+  - Decide on repo organization (see .gitignore example).
   - Create and clone all projects.
-  - Migrate to R Markdown.
+  - Migrate to R Markdown where needed.
   - Update issues for each project.
-  - Flesh out details for this training conditioned on the above.
 
-## Project-Oriented Workflow
+## Project Workflow
 
   - Using RStudio projects.
   - Safe paths (use the `here` package).
   - Beware monoliths (file naming, separate scripts like separate
     functions).
   - Naming conventions (slugs).
-  - Use `output: github_document` in the YAML of R Markdown documents.
-  - Discuss the use of *branches*.
-
-## Advanced Topics
-
-  - .gitignore (see example)
 
 ## Links
 
-  - WTF Workshop (repo)
-  - All the links shared in the workshop
+  - [Workshop at
+    rstudio::conf 2019](https://jennybc.github.io/wtf-2019-rsc/)
+  - [Happy Git and GitHub for the useR](https://happygitwithr.com)
+  - [What They Forgot to Teach You About R](https://whattheyforgot.org)
