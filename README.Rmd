@@ -11,14 +11,14 @@ GitHub is a powerful collaboration and version control tool. We will be using it
 
 ### Project Management
 
-By project management I primarily mean keeping track of assigned tasks using the **Issues** tab on GitHub. We can have an ongoing conversation here about each specific issue and close it out when its completed or resolved. Be sure to tag people you want to see the conversation (e.g., `@marcdotson`). Think of this as an email thread or slack channel where all of the conversations are in one place, easily searchable, and automatically archived.
+By project management I primarily mean keeping track of assigned tasks using the **Issues** tab on GitHub. We can have an ongoing conversation here about each specific issue and close it out when its completed or resolved. Be sure to tag collaborators you want to see the conversation (e.g., `@marcdotson`). Think of this as an email thread or Slack channel where all of the conversations are in one place, easily searchable, and automatically archived.
 
 ### Writing
 
 Think of using GitHub to collaborate on writing like using something like Google Docs. It is essential that we document what we're doing in each project as we do it. This is true for a number of reasons.
 
 1. Writing forces you to think clearly about what you're doing.
-2. If you're writing code, think of writing as long-form comments.
+2. If you're coding, think of the associated writing as long-form comments.
 3. The final product of any project is going to be a report, so start writing it now.
 
 GitHub supports **markdown** syntax, which you're probably more familiar with than you might expect from time spent with **R Markdown**. Here are some [markdown basics](https://rmarkdown.rstudio.com/authoring_basics.html). We will be writing using R Markdown so we can easily include code. The output in the **YAML**, the header at the top, should always be set to `output: github_document`. When you knit changes to your R Markdown document, it will create a markdown document that is easy for GitHub to read.
@@ -37,7 +37,7 @@ Now that you're set up, let's get started.
 
 ### Just Once: Clone
 
-First **clone** one of your repos. This is simply creating a local copy of the repo. You do this inside RStudio by creating a new project and selecting `Version Control > Git`.
+First **clone** one of your repos, or a repo that you're a collaborator on. This is simply creating a local copy of the repo. You do this inside RStudio by creating a new project and selecting `Version Control > Git`.
 
 ![](Figures/clone.png)
 
@@ -59,17 +59,21 @@ I'll create the branches. When you work, make sure you select the branch you wan
 
 ## Project Organization
 
-* Decide on repo organization (see .gitignore example).
-* Create and clone all projects.
-* Migrate to R Markdown where needed.
-* Update issues for each project.
+Each project repo has a similar organization.
+
+* `/Code` Each script should do something specific (think of tidyverse functions) and have a descriptive name.
+* `/Data` What data that is small and that can be shared publically will be stored here.
+* `/Paper` The ongoing paper manuscript, including figures.
+* `README` The abstract and any specific details on project organization or workflow.
+
+There are size limits on GitHub and some things can't or shouldn't be shared publically. I can modify the `.gitignore` file so we can keep folders in local clones that aren't pushed to GitHub (see `example_gitignore`).
 
 ## Project Workflow
 
-* Using RStudio projects.
-* Safe paths (use the `here` package).
-* Beware monoliths (file naming, separate scripts like separate functions).
-* Naming conventions (slugs).
+* Use RStudio projects.
+* Use `here::here()` to specify files paths.
+* We will be using tidyverse functions as much as possible.
+* Code and comment clearly.
 
 ## Links
 
