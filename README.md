@@ -1,8 +1,6 @@
 Research Assistant Training
 ================
 
-Let’s make some changes. Actually, I wanted more on this line.
-
 Welcome\! This **repository** (i.e., **repo**) provides a walkthrough of
 some essential tools and serves as a reference for research assistants.
 The material draws heavily from Jenny Bryan’s training on using Git and
