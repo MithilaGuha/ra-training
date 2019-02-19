@@ -125,7 +125,7 @@ not.
 
 ### Pushed to GitHub
 
-  - `/Code` Each script should do something specific (think of tidyverse
+  - `/Code` Each script should do something specific (like tidyverse
     functions), have a descriptive name, and include number prefixes if
     they are meant to be run in a certain order (e.g.,
     `01_import_data.R`, `02_clean_data.R`).

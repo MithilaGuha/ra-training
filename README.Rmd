@@ -63,7 +63,7 @@ Each project repo has a similar directory organization. There are certain limita
 
 ### Pushed to GitHub
 
-* `/Code` Each script should do something specific (think of tidyverse functions), have a descriptive name, and include number prefixes if they are meant to be run in a certain order (e.g., `01_import_data.R`, `02_clean_data.R`).
+* `/Code` Each script should do something specific (like tidyverse functions), have a descriptive name, and include number prefixes if they are meant to be run in a certain order (e.g., `01_import_data.R`, `02_clean_data.R`).
 * `/Data` While all data live here, only data that are small and can be shared publically will be pushed.
 * `/Figures` Figures created for the `README`, paper, and presentation, all saves as PNG files.
 * `/Paper` The manuscript of the paper, without any PDF knits.
