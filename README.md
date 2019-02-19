@@ -141,13 +141,13 @@ not.
 
 ### Not Pushed to GitHub
 
-  - `/Model Runs` These files tend to be too large. They are also
-    something each user can create on their own.
+  - `/Output` Output from model runs. These files tend to be too large.
+    They are also something each user can create on their own.
   - `/Readings` Loose papers that you want to keep track of reading
     locally. GitHub is not a paper management system.
 
-Note that you can create `Model Runs` and `Readings` folders in your
-local clone without worrying about them being pushed. We can modify the
+Note that you can create `Output` and `Readings` folders in your local
+clone without worrying about them being pushed. We can modify the
 `.gitignore` file to add other folders and files that aren’t pushed to
 GitHub.
 
