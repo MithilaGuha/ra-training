@@ -116,31 +116,52 @@ done into the repo master.
 
 ## Project Organization
 
-Each project repo has a similar organization.
+Each project repo has a similar directory organization. There are
+certain limitations on the size and type of files that can be pushed to
+GitHub. There are also certain things that shouldn’t be accessible by
+the public (e.g., data we have a licence to access). For these reasons,
+we have folders and files that are pushed to GitHub and those that are
+not.
+
+### Pushed to GitHub
 
   - `/Code` Each script should do something specific (think of tidyverse
-    functions) and have a descriptive name.
-  - `/Data` What data that is small and that can be shared publically
-    will be stored here.
-  - `/Paper` The ongoing paper manuscript, including figures.
+    functions), have a descriptive name, and include number prefixes if
+    they are meant to be run in a certain order (e.g.,
+    `01_import_data.R`, `02_clean_data.R`).
+  - `/Data` While all data live here, only data that are small and can
+    be shared publically will be pushed.
+  - `/Figures` Figures created for the `README`, paper, and
+    presentation, all saves as PNG files.
+  - `/Paper` The manuscript of the paper, without any PDF knits.
+  - `/Presentation` Slides for presentations, again without any PDF
+    knits.
   - `README` The abstract and any specific details on project
     organization or workflow.
 
-There are size limits on GitHub and some things can’t or shouldn’t be
-shared publically. I can modify the `.gitignore` file so we can keep
-folders in local clones that aren’t pushed to GitHub (see
-`example_gitignore`).
+### Not Pushed to GitHub
+
+  - `/Model Runs` These files tend to be too large. They are also
+    something each user can create on their own.
+  - `/Readings` Loose papers that you want to keep track of reading
+    locally. GitHub is not a paper management system.
+
+Note that you can create `Model Runs` and `Readings` folders in your
+local clone without worrying about them being pushed. We can modify the
+`.gitignore` file to add other folders and files that aren’t pushed to
+GitHub.
 
 ## Project Workflow
 
   - Use RStudio projects.
   - Use `here::here()` to specify files paths.
-  - We will be using tidyverse functions as much as possible.
-  - Code and comment clearly.
+  - Use tidyverse functions as much as possible.
+  - Try and follow the [tidyverse style
+    guide](https://style.tidyverse.org).
 
 ## Links
 
-  - [Workshop at
-    rstudio::conf 2019](https://jennybc.github.io/wtf-2019-rsc/)
   - [Happy Git and GitHub for the useR](https://happygitwithr.com)
+  - [WTF Workshop at
+    rstudio::conf 2019](https://jennybc.github.io/wtf-2019-rsc/)
   - [What They Forgot to Teach You About R](https://whattheyforgot.org)
