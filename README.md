@@ -161,6 +161,8 @@ GitHub.
 
 ## Links
 
+  - [Academic Research as Software
+    Development](https://www.mathkills.com/words/2019/2/17/academic-research-as-software-development)
   - [Happy Git and GitHub for the useR](https://happygitwithr.com)
   - [WTF Workshop at
     rstudio::conf 2019](https://jennybc.github.io/wtf-2019-rsc/)
