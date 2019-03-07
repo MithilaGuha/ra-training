@@ -78,7 +78,8 @@ As part of model building, there is great need to ensure that the
 specified model is performing as expected (i.e., is consistent with our
 domain expertise). Specifically, we need to be sure that the likelihood
 and the prior are interacting as expected. To do this, for some prior
-\(p(theta)\):
+![p(theta)](https://latex.codecogs.com/png.latex?p%28theta%29
+"p(theta)"):
 
   - Draw parameter values from the prior.
   - Draw data from the proposed likelihood parameterized by the draws of
@@ -107,7 +108,9 @@ simu\_data \<- list(“N” = N)
 fit \<- stan(file=‘generative\_ensemble.stan’, data=simu\_data, iter=R,
 warmup=0, chains=1, refresh=R, seed=4838282, algorithm=“Fixed\_param”)
 
-simu\_lambdas \<- extract(fit)\(lambda simu_ys <- extract(fit)\)y \`
+simu\_lambdas \<- extract(fit)![lambda simu\_ys \<-
+extract(fit)](https://latex.codecogs.com/png.latex?lambda%20simu_ys%20%3C-%20extract%28fit%29
+"lambda simu_ys \<- extract(fit)")y \`
 
 “Some of the distributions in Stan don’t have equivalent random number
 generators in other languages. For example, the LKJ distribution.”
@@ -146,23 +149,34 @@ However, what if we don’t have the HMC diagnostics (or diagnostics in
 general)? If we simulate from the joint distribution, construct
 posteriors, and then average over the posteriors, we should get back the
 priors. This is using the self-consistency of the Bayesian joint
-distribution. Ten simulations are better than
-one.
+distribution. Ten simulations are better than one.
 
-\[\pi_s (\theta^\prime) = \int dy \ d\theta \ \pi_s (\theta^\prime | y) \ \pi_s (y, \theta)\]
+  
+![\\pi\_s (\\theta^\\prime) = \\int dy \\ d\\theta \\ \\pi\_s
+(\\theta^\\prime | y) \\ \\pi\_s (y,
+\\theta)](https://latex.codecogs.com/png.latex?%5Cpi_s%20%28%5Ctheta%5E%5Cprime%29%20%3D%20%5Cint%20dy%20%5C%20d%5Ctheta%20%5C%20%5Cpi_s%20%28%5Ctheta%5E%5Cprime%20%7C%20y%29%20%5C%20%5Cpi_s%20%28y%2C%20%5Ctheta%29
+"\\pi_s (\\theta^\\prime) = \\int dy \\ d\\theta \\ \\pi_s (\\theta^\\prime | y) \\ \\pi_s (y, \\theta)")  
 
 Let’s consider this step-by-step:
 
-\(\tilde{\theta} \sim \pi_s(\theta)\)
+![\\tilde{\\theta} \\sim
+\\pi\_s(\\theta)](https://latex.codecogs.com/png.latex?%5Ctilde%7B%5Ctheta%7D%20%5Csim%20%5Cpi_s%28%5Ctheta%29
+"\\tilde{\\theta} \\sim \\pi_s(\\theta)")
 
-\(\tilde{y} \sim \pi_s(y | \tilde{\theta})\)
+![\\tilde{y} \\sim \\pi\_s(y |
+\\tilde{\\theta})](https://latex.codecogs.com/png.latex?%5Ctilde%7By%7D%20%5Csim%20%5Cpi_s%28y%20%7C%20%5Ctilde%7B%5Ctheta%7D%29
+"\\tilde{y} \\sim \\pi_s(y | \\tilde{\\theta})")
 
-\(\tilde{\theta}^\prime_n \sim \pi_s(\theta^\prime | \tilde{y})\)
+![\\tilde{\\theta}^\\prime\_n \\sim \\pi\_s(\\theta^\\prime |
+\\tilde{y})](https://latex.codecogs.com/png.latex?%5Ctilde%7B%5Ctheta%7D%5E%5Cprime_n%20%5Csim%20%5Cpi_s%28%5Ctheta%5E%5Cprime%20%7C%20%5Ctilde%7By%7D%29
+"\\tilde{\\theta}^\\prime_n \\sim \\pi_s(\\theta^\\prime | \\tilde{y})")
 
-Ranks may be the best way to test this self-consistency:
-\(r = \#\{\tilde{\theta} < \tilde{\theta}^\prime_n\}\). This should give
-us a uniform distribution. This is **simulation-based calibration**
-(SBC). It should be obvious when there are problems.
+Ranks may be the best way to test this self-consistency: ![r =
+\\\#\\{\\tilde{\\theta} \<
+\\tilde{\\theta}^\\prime\_n\\}](https://latex.codecogs.com/png.latex?r%20%3D%20%5C%23%5C%7B%5Ctilde%7B%5Ctheta%7D%20%3C%20%5Ctilde%7B%5Ctheta%7D%5E%5Cprime_n%5C%7D
+"r = \\#\\{\\tilde{\\theta} \< \\tilde{\\theta}^\\prime_n\\}"). This
+should give us a uniform distribution. This is **simulation-based
+calibration** (SBC). It should be obvious when there are problems.
 
 “Parameter recovery is an additional calibration that you might require
 of a model as there are no general guarantees of posterior behavior in
@@ -222,11 +236,16 @@ model has too much structure.
   - Compare the predictive distribution to the held-out data (check for
     overfitting).
 
-\(\tilde{\theta} \sim \pi_s(\theta | \tilde{y})\)
+![\\tilde{\\theta} \\sim \\pi\_s(\\theta |
+\\tilde{y})](https://latex.codecogs.com/png.latex?%5Ctilde%7B%5Ctheta%7D%20%5Csim%20%5Cpi_s%28%5Ctheta%20%7C%20%5Ctilde%7By%7D%29
+"\\tilde{\\theta} \\sim \\pi_s(\\theta | \\tilde{y})")
 
-\(\tilde{y}^\prime \sim \pi_s(y^\prime | \tilde{\theta})\)
+![\\tilde{y}^\\prime \\sim \\pi\_s(y^\\prime |
+\\tilde{\\theta})](https://latex.codecogs.com/png.latex?%5Ctilde%7By%7D%5E%5Cprime%20%5Csim%20%5Cpi_s%28y%5E%5Cprime%20%7C%20%5Ctilde%7B%5Ctheta%7D%29
+"\\tilde{y}^\\prime \\sim \\pi_s(y^\\prime | \\tilde{\\theta})")
 
-\(t(\tilde{y}^\prime)\)
+![t(\\tilde{y}^\\prime)](https://latex.codecogs.com/png.latex?t%28%5Ctilde%7By%7D%5E%5Cprime%29
+"t(\\tilde{y}^\\prime)")
 
 Robust **posterior predictive checks** can be used in place of (or in
 addition to) model comparison.
