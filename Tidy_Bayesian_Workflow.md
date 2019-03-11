@@ -37,6 +37,8 @@ data {
 }
 ```
 
+  - Mosaic plots (for choice models).
+
 ### Build a Generative Model
 
 Next, we translate the simplest expression of the conceptual model into

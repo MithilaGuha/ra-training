@@ -26,6 +26,8 @@ data {
 }
 ```
 
+- Mosaic plots (for choice models).
+
 ### Build a Generative Model
 
 Next, we translate the simplest expression of the conceptual model into a mathematical specification. A fully generative model includes both the likelihood $p(y|\theta)$ (i.e., the data generating process) and the prior $p(\theta)$. We start simple so we can build the model by adding complexity as needed. This is encoded in the `parameters` and `model` blocks in Stan. For example:
