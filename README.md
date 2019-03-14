@@ -138,7 +138,8 @@ folders and files that are pushed to GitHub and those that are not.
   - `/Figures` Figures live here, including images (saved as PNG files)
     and data referenced or used for tables, for use in the `README`,
     paper, and presentation.
-  - `/Paper` The manuscript of the paper, without any PDF knits.
+  - `/Paper` The manuscript of the paper, without any PDF knits,
+    including a specified Creative Commons license.
   - `/Presentation` Slides for presentations, again without any PDF
     knits.
   - `README` The abstract and any project-specific details and
