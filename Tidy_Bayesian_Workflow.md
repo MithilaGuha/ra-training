@@ -7,15 +7,15 @@ diagnostics. In particular, we will employ the tidyverse for data
 wrangling and visualization and Stan for modeling.
 
 The workflow is composed of three sections: **model building**, **model
-calibration**, and **model validation**. The material draws heavily from
-Michael Betancourt’s case studies and training on using Stan at Drexel
-University in Fall 2018.
+calibration**, and **model validation**. The workflow material draws
+heavily from Michael Betancourt’s case studies and training on using
+Stan at Drexel University in Fall 2018.
 
 ## Model Building
 
 ### Describe the Model Conceptually
 
-A model starts conceptually: What is the data generating process? In
+A model starts conceptually: What is the data generating process? Or, in
 other words, where do the data come from? This conceptual model often
 lives within a literature of model building, motivated by theory, and at
 its most basic may simply be a consideration of how to relax assumptions
@@ -23,49 +23,97 @@ in an existing model. Document this description, as it likely serves as
 the beginning of an introduction to the project. Above all, the model
 needs to be consistent with our domain expertise.
 
+#### Example: Consumer Choice
+
+For a running example, let’s consider consumer choice. Drawing from
+economic theory, we can conceptualize the data generating process as
+follows: Consumers get “utility” from different features of a product
+such that they simply choose the product that gives them the most
+utility overall. We can add a lot of complications to this model, but
+conceptually, this is probably the simplest expression.
+
 ### Define Observations and Relevant Summary Statistics
 
 As part of this conceptual description of the model, we should consider
-the ideal dataset as well as what summary statistics, including
-visualizations, we can use to evaluate the model. We encode the
-information about the observations using the `data` block in Stan.
+the ideal dataset. We encode the information about the observations
+using the `data` block in Stan. We should also consider what summary
+statistics, including visualizations, would be helpful to evaluate the
+model.
+
+#### Example: Experimental Designs
+
+For consumer choice, while we could get scanner data, if we can run an
+experiment like a conjoint, we can cleanly know what products the
+consumer was considering as well as the features of the chosen product
+and each of the competing products.
+
+We can encode the observations using the `data` block in our Stan file.
 
 ``` stan
+// Observed choices and the experimental design.
 data {
-  int N;
-  int y[N];
+  int N;             // Number of respondents.
+  int P;             // Number of product alternatives.
+  int L;             // Number of (estimable) attribute levels.
+  
+  int Y[N];          // Vector of observed choices.
+  matrix[P, L] X[N]; // Experimental design for each respondent.
 }
 ```
 
-  - Mosaic plots (for choice models).
+There are a few things we can try in terms of summary statistics.
+
+  - Bar plots of how often each attribute level was in the chosen
+    alternative.
+  - Mosaic plots comparing how often each attribue level was in the
+    chosen alternative.
+  - Visualizing how often each attribute level appears with every other
+    attribute level?
 
 ### Build a Generative Model
 
 Next, we translate the simplest expression of the conceptual model into
-a mathematical specification. A fully generative model includes both the
+a mathematical specification. The full model includes both the
 likelihood
 ![p(y|\\theta)](https://latex.codecogs.com/png.latex?p%28y%7C%5Ctheta%29
 "p(y|\\theta)") (i.e., the data generating process) and the prior
 ![p(\\theta)](https://latex.codecogs.com/png.latex?p%28%5Ctheta%29
 "p(\\theta)"). We start simple so we can build the model by adding
 complexity as needed. This is encoded in the `parameters` and `model`
-blocks in Stan. For example:
+blocks in Stan. The specified model can be compared with competing
+models to build evidence for and against the motivating theory. In this
+way we can view science as a sequence of models that serve as evidence
+in continuously revising and updating theory.
+
+#### Example: Multinomial Logit
+
+The translation of the simplest expression of our conceptual choice
+model into a mathethematical specification yields a multinomial logit
+model. The multinomial logit is a regression where the response variable
+can take on more than one discrete value (e.g., the chosen alternative).
+This is a generalization of the logit model. We are also simplifying
+thing by assuming an aggregate (i.e., non-hierarchical), meaning every
+consumer gets the same utility from every attribute level. It’s a stupid
+assumption, but simplifying assumptions usually are. Here’s the Stan
+code:
 
 ``` stan
+// Parameters for the multinomial logit.
 parameters {
-  real<lower=0> lambda;
+  vector[L] B; // Vector of aggregate beta coefficients.
 }
 
+// Multinomial logit model.
 model {
-  lambda ~ normal(0, 6.44787);
-  y ~ poisson(lambda);
+  // Standard normal prior for B.
+  B ~ normal(0, 1);
+  
+  // Multinomial logit.
+  for (n in 1:N) {
+    Y[n] ~ categorical_logit(X[n] * B);
+  }
 }
 ```
-
-The specified model can be compared with competing models to build
-evidence for and against the motivating theory. In this way we can view
-science as a sequence of models that serve as evidence in continuously
-revising and updating theory.
 
 ## Model Calibration
 
