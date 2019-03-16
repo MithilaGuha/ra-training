@@ -8,18 +8,16 @@ data {
   matrix[P, L] X[N]; // Experimental design for each respondent.
 }
 
-// Parameters for the multinomial logit.
-parameters {
-  vector[L] B; // Vector of aggregate beta coefficients.
-}
-
-// Multinomial logit model.
-model {
-  // Standard normal prior for B.
-  B ~ normal(0, 1);
+// Simulate data according to the multinomial logit model.
+generated quantities {
+  // Draw parameter values from the prior.
+  for (l in 1:L) {
+    B[l] = normal_rng(0, 1);
+  }
   
-  // Multinomial logit.
+  // Draw data from the likelihood.
   for (n in 1:N) {
-    Y[n] ~ categorical_logit(X[n] * B);
+    Y[n] = categorical_logit_rng(X[n] * B);
   }
 }
+

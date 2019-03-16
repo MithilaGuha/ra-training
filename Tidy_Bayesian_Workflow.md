@@ -79,11 +79,11 @@ likelihood
 "p(y|\\theta)") (i.e., the data generating process) and the prior
 ![p(\\theta)](https://latex.codecogs.com/png.latex?p%28%5Ctheta%29
 "p(\\theta)"). We start simple so we can build the model by adding
-complexity as needed. This is encoded in the `parameters` and `model`
-blocks in Stan. The specified model can be compared with competing
-models to build evidence for and against the motivating theory. In this
-way we can view science as a sequence of models that serve as evidence
-in continuously revising and updating theory.
+complexity as needed. This is encoded by adding the `parameters` and
+`model` blocks in Stan. The specified model can be compared with
+competing models to build evidence for and against the motivating
+theory. In this way we can view science as a sequence of models that
+serve as evidence in continuously revising and updating theory.
 
 #### Example: Multinomial Logit
 
@@ -98,6 +98,16 @@ assumption, but simplifying assumptions usually are. Here’s the Stan
 code:
 
 ``` stan
+// Observed choices and the experimental design.
+data {
+  int N;             // Number of respondents.
+  int P;             // Number of product alternatives.
+  int L;             // Number of (estimable) attribute levels.
+  
+  int Y[N];          // Vector of observed choices.
+  matrix[P, L] X[N]; // Experimental design for each respondent.
+}
+
 // Parameters for the multinomial logit.
 parameters {
   vector[L] B; // Vector of aggregate beta coefficients.
@@ -142,48 +152,50 @@ perform **prior predictive checks** (i.e., prior to the actual data):
 This **prior predictive distribution** should be plausible based on your
 domain expertise and provides a cleaner way to communicate and evaluate
 the consequences of the assumptions you’ve made in building your model.
-We accomplish this by using the `generated quantities` block in Stan.
-For example:
+We accomplish this by adding the `generated quantities` block in Stan in
+place of the `parameters` and `model` blocks.
 
-``` stan
-generated quantities {
-  real<lower=0> lambda = fabs(normal_rng(0, 6.44787));
-  int y[N];
-    for (n in 1:N) y[n] = poisson_rng(lambda);
-}
-```
-
-We then call the generative model from R and extract the simulated data
-to perform the prior predictive check. For example:
-
-``` r
-R <- 1000
-N <- 1000
-
-simu_data <- list("N" = N)
-
-fit <- stan(
-  file = "generative_ensemble.stan", 
-  data = simu_data,
-  iter = R,
-  warmup = 0, 
-  chains = 1, 
-  refresh = R,
-  seed = 42, 
-  algorithm = "Fixed_param"
-)
-
-simu_lambdas <- extract(fit)$lambda
-simu_ys <- extract(fit)$y
-```
-
-We could also simulate data just using R. However, simulating data using
-Stan does a few things for us.
+Note that we could also simulate data just using R. However, simulating
+data using Stan does a few things for us.
 
   - We will be using Stan to estimate the model, so we reduce
     duplicating efforts by keeping the simulation in stan.
   - Some of the distributions we’ll want to use (e.g., the LKJ
     distribution) don’t exist outside Stan.
+
+#### Example: Multinomial Logit Prior Predictive Check
+
+Here we translate the `parameters` and `model` blocks into a `generated
+quantaties` block to simulate data according to the proposed prior and
+likelihood. Note how statements about distributions (e.g., `B ~
+normal(0, 1)`) get turned into statements that generate parameter values
+and data from those same distributions (e.g., `B = normal_rng(0, 1)`).
+
+``` stan
+// Observed choices and the experimental design.
+data {
+  int N;             // Number of respondents.
+  int P;             // Number of product alternatives.
+  int L;             // Number of (estimable) attribute levels.
+  
+  int Y[N];          // Vector of observed choices.
+  matrix[P, L] X[N]; // Experimental design for each respondent.
+}
+
+// Simulate data according to the multinomial logit model.
+generated quantities {
+  // Draw parameter values from the prior.
+  vector[L] B = normal_rng(0, 1);
+  
+  // Draw data from the likelihood.
+  for (n in 1:N) {
+    Y[n] = categorical_logit_rng(X[n] * B);
+  }
+}
+```
+
+We then call the generative model from R and extract the simulated data
+to perform the prior predictive check.
 
 ### Calibrate the Model with Simulated Data and Evaluate
 
