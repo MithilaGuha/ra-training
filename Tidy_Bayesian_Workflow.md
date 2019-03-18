@@ -52,12 +52,12 @@ We can encode the observations using the `data` block in our Stan file.
 ``` stan
 // Observed choices and the experimental design.
 data {
-  int N;             // Number of respondents.
+  int N;             // Number of observations.
   int P;             // Number of product alternatives.
   int L;             // Number of (estimable) attribute levels.
   
   int Y[N];          // Vector of observed choices.
-  matrix[P, L] X[N]; // Experimental design for each respondent.
+  matrix[P, L] X[N]; // Experimental design for each observation.
 }
 ```
 
@@ -92,7 +92,7 @@ model into a mathethematical specification yields a multinomial logit
 model. The multinomial logit is a regression where the response variable
 can take on more than one discrete value (e.g., the chosen alternative).
 This is a generalization of the logit model. We are also simplifying
-thing by assuming an aggregate (i.e., non-hierarchical), meaning every
+things by assuming an aggregate (i.e., non-hierarchical), meaning every
 consumer gets the same utility from every attribute level. It’s a stupid
 assumption, but simplifying assumptions usually are. Here’s the Stan
 code:
@@ -100,12 +100,12 @@ code:
 ``` stan
 // Observed choices and the experimental design.
 data {
-  int N;             // Number of respondents.
+  int N;             // Number of observations.
   int P;             // Number of product alternatives.
   int L;             // Number of (estimable) attribute levels.
   
   int Y[N];          // Vector of observed choices.
-  matrix[P, L] X[N]; // Experimental design for each respondent.
+  matrix[P, L] X[N]; // Experimental design for each observations.
 }
 
 // Parameters for the multinomial logit.
@@ -134,7 +134,7 @@ specified model is performing as expected (i.e., that it is consistent
 with our domain expertise). Specifically, we need to be sure that the
 likelihood and prior are *interacting* as expected, something impossible
 to do just looking at the model specification. To do this, we need to
-perform **prior predictive checks** (i.e., prior to the actual data):
+perform **prior predictive checks**:
 
   - Draw parameter values from the prior ![\\tilde{\\theta} \\sim
     p(\\theta)](https://latex.codecogs.com/png.latex?%5Ctilde%7B%5Ctheta%7D%20%5Csim%20p%28%5Ctheta%29
@@ -149,11 +149,12 @@ perform **prior predictive checks** (i.e., prior to the actual data):
   - Repeat this process many times, returning to modify the likelihood
     and prior as needed.
 
-This **prior predictive distribution** should be plausible based on your
-domain expertise and provides a cleaner way to communicate and evaluate
-the consequences of the assumptions you’ve made in building your model.
-We accomplish this by adding the `generated quantities` block in Stan in
-place of the `parameters` and `model` blocks.
+The resulting **prior predictive distribution** should be plausible
+based on your domain expertise and provides a clean way to communicate
+and evaluate the consequences of the assumptions you’ve made in building
+your model, including specifying the prior. We accomplish this by adding
+the `generated quantities` block in Stan in place of the `parameters`
+and `model` blocks.
 
 Note that we could also simulate data just using R. However, simulating
 data using Stan does a few things for us.

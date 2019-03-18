@@ -1,11 +1,11 @@
 // Observed choices and the experimental design.
 data {
-  int N;             // Number of respondents.
+  int N;             // Number of observations.
   int P;             // Number of product alternatives.
   int L;             // Number of (estimable) attribute levels.
   
   int Y[N];          // Vector of observed choices.
-  matrix[P, L] X[N]; // Experimental design for each respondent.
+  matrix[P, L] X[N]; // Experimental design for each observations.
 }
 
 // Parameters for the multinomial logit.
