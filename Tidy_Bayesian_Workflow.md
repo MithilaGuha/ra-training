@@ -45,7 +45,9 @@ model.
 For consumer choice, while we could get scanner data, if we can run an
 experiment like a conjoint, we can cleanly know what products the
 consumer was considering as well as the features of the chosen product
-and each of the competing products.
+and each of the competing products. As a further simplification, we can
+consider all binary attribute levels (i.e., either included or not
+included).
 
 We can encode the observations using the `data` block in our Stan file.
 
@@ -171,25 +173,36 @@ quantaties` block to simulate data according to the proposed prior and
 likelihood. Note how statements about distributions (e.g., `B ~
 normal(0, 1)`) get turned into statements that generate parameter values
 and data from those same distributions (e.g., `B = normal_rng(0, 1)`).
+Also note that besides the number of observations, etc. the `data`
+arguments have also moved to be initialized in the `generated
+quantities` block since they too are being simulated.
 
 ``` stan
-// Observed choices and the experimental design.
+// Number of observations, choices, etc. to simulate.
 data {
-  int N;             // Number of respondents.
+  int N;             // Number of observations.
   int P;             // Number of product alternatives.
   int L;             // Number of (estimable) attribute levels.
-  
-  int Y[N];          // Vector of observed choices.
-  matrix[P, L] X[N]; // Experimental design for each respondent.
 }
 
 // Simulate data according to the multinomial logit model.
 generated quantities {
+  int Y[N];          // Vector of observed choices.
+  matrix[P, L] X[N]; // Experimental design for each observations.
+  vector[L] B;       // Vector of aggregate beta coefficients.
+
   // Draw parameter values from the prior.
-  vector[L] B = normal_rng(0, 1);
-  
-  // Draw data from the likelihood.
+  for (l in 1:L) {
+    B[l] = normal_rng(0, 1);
+  }
+
+  // Generate an experimental design and draw data from the likelihood.
   for (n in 1:N) {
+    for (p in 1:P) {
+      for (l in 1:L) {
+        X[n][p, l] = binomial_rng(1, 0.5);
+      }
+    }
     Y[n] = categorical_logit_rng(X[n] * B);
   }
 }
@@ -197,6 +210,38 @@ generated quantities {
 
 We then call the generative model from R and extract the simulated data
 to perform the prior predictive check.
+
+``` r
+# Load libraries.
+library(rstan)
+
+# Specify the data values for simulation in a list.
+sim_values <- list(
+  N = 100,           # Number of observations.
+  P = 3,             # Number of product alternatives.
+  L = 10             # Number of (estimable) attribute levels.
+)
+
+# Specify the number of draws.
+R <- 1000
+
+# Simulate data.
+sim_data <- stan(
+  file = here::here("Code", "mnl_simulate.stan"), 
+  data = sim_values,
+  iter = R,
+  warmup = 0, 
+  chains = 1, 
+  refresh = R,
+  seed = 42,
+  algorithm = "Fixed_param"
+)
+
+# Extract the simulated values.
+sim_y <- extract(sim_data)$Y
+sim_x <- extract(sim_data)$X
+sim_b <- extract(sim_data)$B
+```
 
 ### Calibrate the Model with Simulated Data and Evaluate
 
