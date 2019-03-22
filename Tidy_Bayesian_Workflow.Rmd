@@ -2,7 +2,7 @@
 title: "A Tidy Bayesian Workflow"
 output: 
    github_document: 
-      pandoc_args: --mathjax
+      pandoc_args: --webtex
 ---
 
 This **tidy Bayesian workflow** details the process of conducting Bayesian inference using tidy principles and modern tools and diagnostics. In particular, we will employ the tidyverse for data wrangling and visualization and Stan for modeling.
