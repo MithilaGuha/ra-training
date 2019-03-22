@@ -76,11 +76,8 @@ There are a few things we can try in terms of summary statistics.
 
 Next, we translate the simplest expression of the conceptual model into
 a mathematical specification. The full model includes both the
-likelihood
-![p(y|\\theta)](https://latex.codecogs.com/png.latex?p%28y%7C%5Ctheta%29
-"p(y|\\theta)") (i.e., the data generating process) and the prior
-![p(\\theta)](https://latex.codecogs.com/png.latex?p%28%5Ctheta%29
-"p(\\theta)"). We start simple so we can build the model by adding
+likelihood \(p(y|\theta)\) (i.e., the data generating process) and the
+prior \(p(\theta)\). We start simple so we can build the model by adding
 complexity as needed. This is encoded by adding the `parameters` and
 `model` blocks in Stan. The specified model can be compared with
 competing models to build evidence for and against the motivating
@@ -138,16 +135,12 @@ likelihood and prior are *interacting* as expected, something impossible
 to do just looking at the model specification. To do this, we need to
 perform **prior predictive checks**:
 
-  - Draw parameter values from the prior ![\\tilde{\\theta} \\sim
-    p(\\theta)](https://latex.codecogs.com/png.latex?%5Ctilde%7B%5Ctheta%7D%20%5Csim%20p%28%5Ctheta%29
-    "\\tilde{\\theta} \\sim p(\\theta)").
+  - Draw parameter values from the prior
+    \(\tilde{\theta} \sim p(\theta)\).
   - Draw data from the likelihood parameterized by the draws of the
-    parameter values ![\\tilde{y} \\sim
-    p(y|\\tilde{\\theta})](https://latex.codecogs.com/png.latex?%5Ctilde%7By%7D%20%5Csim%20p%28y%7C%5Ctilde%7B%5Ctheta%7D%29
-    "\\tilde{y} \\sim p(y|\\tilde{\\theta})").
-  - Summarize these data
-    ![\\tilde{y}](https://latex.codecogs.com/png.latex?%5Ctilde%7By%7D
-    "\\tilde{y}") by visualizing the relevant summary statistics.
+    parameter values \(\tilde{y} \sim p(y|\tilde{\theta})\).
+  - Summarize these data \(\tilde{y}\) by visualizing the relevant
+    summary statistics.
   - Repeat this process many times, returning to modify the likelihood
     and prior as needed.
 
@@ -276,32 +269,21 @@ As a general diagnostic (with or without HMC), we can use
 distribution, construct posteriors, and then average over the
 posteriors, we should get back the priors. This is using the
 self-consistency of the Bayesian joint distribution. Ten simulations are
-better than one.
+better than
+one.
 
-  
-![\\pi\_s (\\theta^\\prime) = \\int dy \\ d\\theta \\ \\pi\_s
-(\\theta^\\prime | y) \\ \\pi\_s (y,
-\\theta)](https://latex.codecogs.com/png.latex?%5Cpi_s%20%28%5Ctheta%5E%5Cprime%29%20%3D%20%5Cint%20dy%20%5C%20d%5Ctheta%20%5C%20%5Cpi_s%20%28%5Ctheta%5E%5Cprime%20%7C%20y%29%20%5C%20%5Cpi_s%20%28y%2C%20%5Ctheta%29
-"\\pi_s (\\theta^\\prime) = \\int dy \\ d\\theta \\ \\pi_s (\\theta^\\prime | y) \\ \\pi_s (y, \\theta)")  
+\[\pi_s (\theta^\prime) = \int dy \ d\theta \ \pi_s (\theta^\prime | y) \ \pi_s (y, \theta)\]
 
 Let’s consider this step-by-step:
 
-  - ![\\tilde{\\theta} \\sim
-    \\pi\_s(\\theta)](https://latex.codecogs.com/png.latex?%5Ctilde%7B%5Ctheta%7D%20%5Csim%20%5Cpi_s%28%5Ctheta%29
-    "\\tilde{\\theta} \\sim \\pi_s(\\theta)")
-  - ![\\tilde{y} \\sim \\pi\_s(y |
-    \\tilde{\\theta})](https://latex.codecogs.com/png.latex?%5Ctilde%7By%7D%20%5Csim%20%5Cpi_s%28y%20%7C%20%5Ctilde%7B%5Ctheta%7D%29
-    "\\tilde{y} \\sim \\pi_s(y | \\tilde{\\theta})")
-  - ![\\tilde{\\theta}^\\prime\_n \\sim \\pi\_s(\\theta^\\prime |
-    \\tilde{y})](https://latex.codecogs.com/png.latex?%5Ctilde%7B%5Ctheta%7D%5E%5Cprime_n%20%5Csim%20%5Cpi_s%28%5Ctheta%5E%5Cprime%20%7C%20%5Ctilde%7By%7D%29
-    "\\tilde{\\theta}^\\prime_n \\sim \\pi_s(\\theta^\\prime | \\tilde{y})")
+  - \(\tilde{\theta} \sim \pi_s(\theta)\)
+  - \(\tilde{y} \sim \pi_s(y | \tilde{\theta})\)
+  - \(\tilde{\theta}^\prime_n \sim \pi_s(\theta^\prime | \tilde{y})\)
 
-Ranks may be the best way to test this self-consistency: ![r =
-\\\#\\{\\tilde{\\theta} \<
-\\tilde{\\theta}^\\prime\_n\\}](https://latex.codecogs.com/png.latex?r%20%3D%20%5C%23%5C%7B%5Ctilde%7B%5Ctheta%7D%20%3C%20%5Ctilde%7B%5Ctheta%7D%5E%5Cprime_n%5C%7D
-"r = \\#\\{\\tilde{\\theta} \< \\tilde{\\theta}^\\prime_n\\}"). This
-should give us a uniform distribution. This is **simulation-based
-calibration** (SBC). It should be obvious when there are problems.
+Ranks may be the best way to test this self-consistency:
+\(r = \#\{\tilde{\theta} < \tilde{\theta}^\prime_n\}\). This should give
+us a uniform distribution. This is **simulation-based calibration**
+(SBC). It should be obvious when there are problems.
 
 ### Calibrate the Model with Real Data and Evaluate
 
@@ -353,16 +335,11 @@ model has too much structure.
   - Compare the predictive distribution to the held-out data (check for
     overfitting).
 
-![\\tilde{\\theta} \\sim \\pi\_s(\\theta |
-\\tilde{y})](https://latex.codecogs.com/png.latex?%5Ctilde%7B%5Ctheta%7D%20%5Csim%20%5Cpi_s%28%5Ctheta%20%7C%20%5Ctilde%7By%7D%29
-"\\tilde{\\theta} \\sim \\pi_s(\\theta | \\tilde{y})")
+\(\tilde{\theta} \sim \pi_s(\theta | \tilde{y})\)
 
-![\\tilde{y}^\\prime \\sim \\pi\_s(y^\\prime |
-\\tilde{\\theta})](https://latex.codecogs.com/png.latex?%5Ctilde%7By%7D%5E%5Cprime%20%5Csim%20%5Cpi_s%28y%5E%5Cprime%20%7C%20%5Ctilde%7B%5Ctheta%7D%29
-"\\tilde{y}^\\prime \\sim \\pi_s(y^\\prime | \\tilde{\\theta})")
+\(\tilde{y}^\prime \sim \pi_s(y^\prime | \tilde{\theta})\)
 
-![t(\\tilde{y}^\\prime)](https://latex.codecogs.com/png.latex?t%28%5Ctilde%7By%7D%5E%5Cprime%29
-"t(\\tilde{y}^\\prime)")
+\(t(\tilde{y}^\prime)\)
 
 Robust **posterior predictive checks** can be used in place of (or in
 addition to) model comparison.
