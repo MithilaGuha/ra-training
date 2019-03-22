@@ -1,4 +1,5 @@
 # Load libraries.
+library(tidyverse)
 library(rstan)
 
 # Specify the data values for simulation in a list.
@@ -8,8 +9,8 @@ sim_values <- list(
   L = 10             # Number of (estimable) attribute levels.
 )
 
-# Specify the number of draws.
-R <- 1000
+# Specify the number of draws (i.e., simulated datasets).
+R <- 50
 
 # Simulate data.
 sim_data <- stan(
@@ -33,4 +34,5 @@ sim_b <- extract(sim_data)$B
 # - Mosaic plots comparing how often each attribue level was in the chosen alternative.
 # - Visualizing how often each attribute level appears with every other attribute level?
 
+str(sim_y)
 
