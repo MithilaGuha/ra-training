@@ -1,5 +1,6 @@
 # Load libraries.
 library(tidyverse)
+library(tidybayes)
 library(rstan)
 
 # Specify the data values for simulation in a list.
@@ -24,15 +25,35 @@ sim_data <- stan(
   algorithm = "Fixed_param"
 )
 
-# Extract the simulated values.
+# Possible prior predictive checks:
+# - Mosaic plots comparing how often each attribue level was in the chosen alternative.
+# - Visualizing how often each attribute level appears with every other attribute level?
+
+# Count of attribute levels in the chosen alternative.
+sim_data %>% 
+  spread_draws(Y[n], X[n][p, l]) %>% 
+  filter(Y == p) %>% 
+  group_by(l) %>% 
+  summarize(sum_x = sum(X)) %>% 
+  ggplot(aes(x = as.factor(l), y = sum_x)) +
+  geom_col() +
+  labs(
+    title = "Count of attribute levels in the chosen alternative",
+    x = "Attribute Levels",
+    y = "Count"
+  ) +
+  coord_flip()
+  
+# sim_data %>% 
+#   spread_draws(X[l])
+# 
+# sim_data %>% 
+#   gather_draws(B[l])
+
+str(extract(sim_data)$Y)
+
 sim_y <- extract(sim_data)$Y
 sim_x <- extract(sim_data)$X
 sim_b <- extract(sim_data)$B
 
-# Possible prior predictive checks:
-# - Bar plots of how often each attribute level was in the chosen alternative.
-# - Mosaic plots comparing how often each attribue level was in the chosen alternative.
-# - Visualizing how often each attribute level appears with every other attribute level?
-
-str(sim_y)
-
+# Bayesplot?

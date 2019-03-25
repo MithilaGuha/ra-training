@@ -208,13 +208,53 @@ generated quantities {
 }
 ```
 
-We then call the generative model from R and extract the simulated data
-to perform the prior predictive check.
+We then call the generative model from R.
 
 ``` r
 # Load libraries.
-library(rstan)
+library(tidyverse)
+```
 
+    ## ── Attaching packages ──────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
+
+    ## ✔ ggplot2 3.1.0     ✔ purrr   0.2.5
+    ## ✔ tibble  2.0.0     ✔ dplyr   0.7.8
+    ## ✔ tidyr   0.8.2     ✔ stringr 1.3.1
+    ## ✔ readr   1.3.1     ✔ forcats 0.3.0
+
+    ## ── Conflicts ─────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ✖ dplyr::filter() masks stats::filter()
+    ## ✖ dplyr::lag()    masks stats::lag()
+
+``` r
+library(tidybayes)
+```
+
+    ## NOTE: As of tidybayes version 1.0, several functions, arguments, and output column names
+    ##       have undergone significant name changes in order to adopt a unified naming scheme.
+    ##       See help('tidybayes-deprecated') for more information.
+
+``` r
+library(rstan)
+```
+
+    ## Loading required package: StanHeaders
+
+    ## rstan (Version 2.18.2, GitRev: 2e1f913d3ca3)
+
+    ## For execution on a local, multicore CPU with excess RAM we recommend calling
+    ## options(mc.cores = parallel::detectCores()).
+    ## To avoid recompilation of unchanged Stan programs, we recommend calling
+    ## rstan_options(auto_write = TRUE)
+
+    ## 
+    ## Attaching package: 'rstan'
+
+    ## The following object is masked from 'package:tidyr':
+    ## 
+    ##     extract
+
+``` r
 # Specify the data values for simulation in a list.
 sim_values <- list(
   N = 100,           # Number of observations.
@@ -222,8 +262,8 @@ sim_values <- list(
   L = 10             # Number of (estimable) attribute levels.
 )
 
-# Specify the number of draws.
-R <- 1000
+# Specify the number of draws (i.e., simulated datasets).
+R <- 50
 
 # Simulate data.
 sim_data <- stan(
@@ -236,12 +276,41 @@ sim_data <- stan(
   seed = 42,
   algorithm = "Fixed_param"
 )
-
-# Extract the simulated values.
-sim_y <- extract(sim_data)$Y
-sim_x <- extract(sim_data)$X
-sim_b <- extract(sim_data)$B
 ```
+
+    ## 
+    ## SAMPLING FOR MODEL 'mnl_simulate' NOW (CHAIN 1).
+    ## Chain 1: Iteration:  1 / 50 [  2%]  (Sampling)
+    ## Chain 1: Iteration: 50 / 50 [100%]  (Sampling)
+    ## Chain 1: 
+    ## Chain 1:  Elapsed Time: 0 seconds (Warm-up)
+    ## Chain 1:                0.014217 seconds (Sampling)
+    ## Chain 1:                0.014217 seconds (Total)
+    ## Chain 1:
+
+We can now extract the simulated data to perform the prior predictive
+check. Here, we are counting the number of times each attribute level
+shows up in the chosen alternative. For the simulated data, we would
+expect this to be more or less uniform.
+
+``` r
+# Count of attribute levels in the chosen alternative.
+sim_data %>% 
+  spread_draws(Y[n], X[n][p, l]) %>% 
+  filter(Y == p) %>% 
+  group_by(l) %>% 
+  summarize(sum_x = sum(X)) %>% 
+  ggplot(aes(x = as.factor(l), y = sum_x)) +
+  geom_col() +
+  labs(
+    title = "Count of attribute levels in the chosen alternative",
+    x = "Attribute Levels",
+    y = "Count"
+  ) +
+  coord_flip()
+```
+
+![](Tidy_Bayesian_Workflow_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ### Calibrate the Model with Simulated Data and Evaluate
 
