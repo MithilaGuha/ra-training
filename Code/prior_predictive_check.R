@@ -1,6 +1,5 @@
 # Load libraries.
 library(tidyverse)
-library(tidybayes)
 library(rstan)
 
 # Specify the data values for simulation in a list.
@@ -25,35 +24,37 @@ sim_data <- stan(
   algorithm = "Fixed_param"
 )
 
-# Possible prior predictive checks:
-# - Mosaic plots comparing how often each attribue level was in the chosen alternative.
-# - Visualizing how often each attribute level appears with every other attribute level?
-
-# Count of attribute levels in the chosen alternative.
-sim_data %>% 
-  spread_draws(Y[n], X[n][p, l]) %>% 
-  filter(Y == p) %>% 
-  group_by(l) %>% 
-  summarize(sum_x = sum(X)) %>% 
-  ggplot(aes(x = as.factor(l), y = sum_x)) +
-  geom_col() +
-  labs(
-    title = "Count of attribute levels in the chosen alternative",
-    x = "Attribute Levels",
-    y = "Count"
-  ) +
-  coord_flip()
-  
-# sim_data %>% 
-#   spread_draws(X[l])
-# 
-# sim_data %>% 
-#   gather_draws(B[l])
-
-str(extract(sim_data)$Y)
-
-sim_y <- extract(sim_data)$Y
+# Extract simulated data and parameters.
 sim_x <- extract(sim_data)$X
 sim_b <- extract(sim_data)$B
 
-# Bayesplot?
+# Compute the implied choice probabilities.
+probs <- NULL
+for (r in 1:R) {
+  for (n in 1:sim_values$N) {
+    exp_xb <- exp(sim_x[r,n,,] %*% sim_b[r,])
+    max_prob <- max(exp_xb / sum(exp_xb))
+    probs <- c(probs, max_prob)
+  }
+}
+
+# Make sure there aren't dominating alternatives.
+tibble(probs) %>% 
+  ggplot(aes(x = probs)) +
+  geom_histogram()
+
+# # Count of attribute levels in the chosen alternative.
+# library(tidybayes)
+# sim_data %>% 
+#   spread_draws(Y[n], X[n][p, l]) %>% 
+#   filter(Y == p) %>% 
+#   group_by(l) %>% 
+#   summarize(sum_x = sum(X)) %>% 
+#   ggplot(aes(x = as.factor(l), y = sum_x)) +
+#   geom_col() +
+#   labs(
+#     title = "Count of attribute levels in the chosen alternative",
+#     x = "Attribute Levels",
+#     y = "Count"
+#   ) +
+#   coord_flip()
