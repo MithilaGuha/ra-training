@@ -193,21 +193,25 @@ There isn't a spike at a probability of 1, so our prior of `B ~ normal(0, 1)` co
 
 ### Calibrate the Model with Simulated Data and Evaluate
 
-Are our computational tools sufficient to accurately fit the model?
+Once we have completed iterating through our prior predictive check and have decided on a fully specified generative model that accurately reflects our domain expertise, we are ready to calibrate (i.e., estimate or fit) the model. An underlying question at this point in our workflow is whether our computational tools (e.g., Stan) are sufficient to accurately fit the model. The more complex our model becomes, the more this will be of concern.
 
-Once we have a fully specified generative model that accurately reflects our domain expertise, we are ready to calibrate or estimate the model. To first confirm that the model and estimation routine are performing as expected, we calibrate the model using simulated data to evaluate estimation and and demonstrate parameter recovery.
+Before calibrating the model with actual data where we can easily confound the model's performance with the performance of the computational tools, we first confirm that the model and estimation routine are performing as expected by calibrating the model using simulated data. With simulated data, we know the underlying truth and can focus entirely on evaluating the estimation procedure and demonstrating parameter recovery.
 
-#### Evaluate Diagnostics
+Just as we used the prior predictive check as a diagnostic to help set priors and specify the likelihood, so too will our evaluation of calibrating the model with simulated data help inform how we *parameterize* the model as well as what computational tools we employ. A model can be expressed in a number of different, mathematically equivalent ways. However, a given computational tool may work best using certain parameterizations. When diagnostics suggest it, we may need to **reparameterize** our model. Additionally, while we would like to use Stan for estimation, in no small part because it has built in diagnostics, it is possible we may need to depart and use a different computational tool for a given model.
 
-HMC has built-in diagnostics.
+To summarize, we need to:
 
-#### Reparameterize
-#### Evaluate Prior-Posterior Consistency
-#### Confirm Parameter Recovery
+- Fit the model on simulated data where we know the true parameter values.
+- Utilize a number of diagnostics (starting with the HMC diagnostics from Stan) to evaluate the computational tool and its interaction with the model.
+- Reparameterize the model as needed.
+- Change computational tools as needed.
+- Demonstrate parameter recovery for the given model parameterization and computational tool.
 
-> "Parameter recovery is an additional calibration that you might require of a model as there are no general guarantees of posterior behavior in Bayesian inference. That said, non- or weak- identifiability can manifest in especially poor calibrations." -Michael Betancourt
+#### Example: Multinomial Logit Model Calibration and Evaluation
 
-#### Perform Simulation-Based Calibration
+- HMC Diagnostics
+- Prior-Posterior Consistency
+- Simulation-Based Calibration
 
 As a general diagnostic (with or without HMC), we can use **simulation-based calibration**. If we simulate from the joint distribution, construct posteriors, and then average over the posteriors, we should get back the priors. This is using the self-consistency of the Bayesian joint distribution. Ten simulations are better than one.
 
@@ -220,6 +224,10 @@ Let's consider this step-by-step:
 - $\tilde{\theta}^\prime_n \sim \pi_s(\theta^\prime | \tilde{y})$
 
 Ranks may be the best way to test this self-consistency: $r = \#\{\tilde{\theta} < \tilde{\theta}^\prime_n\}$. This should give us a uniform distribution. This is **simulation-based calibration** (SBC). It should be obvious when there are problems.
+
+- Parameter Recovery
+
+> "Parameter recovery is an additional calibration that you might require of a model as there are no general guarantees of posterior behavior in Bayesian inference. That said, non- or weak- identifiability can manifest in especially poor calibrations." -Michael Betancourt
 
 ### Calibrate the Model with Real Data and Evaluate
 

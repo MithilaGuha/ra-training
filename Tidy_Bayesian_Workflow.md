@@ -90,10 +90,10 @@ model into a mathethematical specification yields a multinomial logit
 model. The multinomial logit is a regression where the response variable
 can take on more than one discrete value (e.g., the chosen alternative).
 This is a generalization of the logit model. We are also simplifying
-things by assuming an aggregate (i.e., non-hierarchical), meaning every
-consumer gets the same utility from every attribute level. It’s a stupid
-assumption, but simplifying assumptions usually are. Here’s the Stan
-code:
+things by assuming an aggregate (i.e., non-hierarchical) model, meaning
+every consumer gets the same utility from every attribute level. It’s a
+stupid assumption, but simplifying assumptions usually are. Here’s the
+Stan code:
 
 ``` stan
 // Observed choices and the experimental design.
@@ -108,7 +108,7 @@ data {
 
 // Parameters for the multinomial logit.
 parameters {
-  vector[L] B; // Vector of aggregate beta coefficients.
+  vector[L] B;       // Vector of aggregate beta coefficients.
 }
 
 // Multinomial logit model.
@@ -130,9 +130,11 @@ model {
 Now that we’ve built the (simple) model, we need to ensure that the
 specified model is performing as expected (i.e., that it is consistent
 with our domain expertise). Specifically, we need to be sure that the
-likelihood and prior are *interacting* as expected, something impossible
-to do just looking at the model specification. To do this, we need to
-perform **prior predictive checks**:
+prior and likelihood are *interacting* as expected, something impossible
+to determine by just looking at the model specification. To do this, we
+need to perform **prior predictive checks**, *prior* because this is
+before we have data and *predictive* because we’re considering what the
+model as specified would predict:
 
   - Draw parameter values from the prior ![\\tilde{\\theta} \\sim
     p(\\theta)](https://latex.codecogs.com/png.latex?%5Ctilde%7B%5Ctheta%7D%20%5Csim%20p%28%5Ctheta%29
@@ -150,9 +152,10 @@ perform **prior predictive checks**:
 The resulting **prior predictive distribution** should be plausible
 based on your domain expertise and provides a clean way to communicate
 and evaluate the consequences of the assumptions you’ve made in building
-your model, including specifying the prior. We accomplish this by adding
-the `generated quantities` block in Stan in place of the `parameters`
-and `model` blocks.
+your model, including specifying the prior. We conduct the prior
+predictive check by adding the `generated quantities` block in Stan in
+place of the `parameters` and `model` blocks, since we’re *generating*
+or *simulating* data.
 
 Note that we could also simulate data just using R. However, simulating
 data using Stan does a few things for us.
@@ -160,12 +163,12 @@ data using Stan does a few things for us.
   - We will be using Stan to estimate the model, so we reduce
     duplicating efforts by keeping the simulation in stan.
   - Some of the distributions we’ll want to use (e.g., the LKJ
-    distribution) don’t exist outside Stan.
+    distribution) don’t exist natively outside Stan.
 
 #### Example: Multinomial Logit Prior Predictive Check
 
 Here we translate the `parameters` and `model` blocks into a `generated
-quantaties` block to simulate data according to the proposed prior and
+quantities` block to simulate data according to the proposed prior and
 likelihood. Note how statements about distributions (e.g., `B ~
 normal(0, 1)`) get turned into statements that generate parameter values
 and data from those same distributions (e.g., `B = normal_rng(0, 1)`).
@@ -240,7 +243,7 @@ check.
 Here, we are computing the implied choice probabilities using the
 experimental design `X` and the parameters `B`. Note that in this
 instance summaring the data `Y` is not informative; we are summarizing
-the data `X` and paramaters `B` combined to produce the underlying,
+the data `X` and parameters `B` combined to produce the underlying,
 implied choice probabilities that produce `Y`.
 
 ``` r
@@ -267,37 +270,58 @@ tibble(probs) %>%
 ![](Figures/probs_plot.png)
 
 There isn’t a spike at a probability of 1, so our prior of `B ~
-normal(0, 1)` does not appear to produce dominating alternatives. This
-part of the workflow typically requires some iteration, since the ways
-in which the prior and likelihood and combine aren’t always obvious.
+normal(0, 1)` combined with the multinomial logit likelihood does not
+produce dominating alternatives. This part of the workflow typically
+requires some iteration, since the ways in which the prior and
+likelihood can combine aren’t always obvious.
 
 ### Calibrate the Model with Simulated Data and Evaluate
 
-Are our computational tools sufficient to accurately fit the model?
+Once we have completed iterating through our prior predictive check and
+have decided on a fully specified generative model that accurately
+reflects our domain expertise, we are ready to calibrate (i.e., estimate
+or fit) the model. An underlying question at this point in our workflow
+is whether our computational tools (e.g., Stan) are sufficient to
+accurately fit the model. The more complex our model becomes, the more
+this will be of concern.
 
-Once we have a fully specified generative model that accurately reflects
-our domain expertise, we are ready to calibrate or estimate the model.
-To first confirm that the model and estimation routine are performing as
-expected, we calibrate the model using simulated data to evaluate
-estimation and and demonstrate parameter recovery.
+Before calibrating the model with actual data where we can easily
+confound the model’s performance with the performance of the
+computational tools, we first confirm that the model and estimation
+routine are performing as expected by calibrating the model using
+simulated data. With simulated data, we know the underlying truth and
+can focus entirely on evaluating the estimation procedure and
+demonstrating parameter recovery.
 
-#### Evaluate Diagnostics
+Just as we used the prior predictive check as a diagnostic to help set
+priors and specify the likelihood, so too will our evaluation of
+calibrating the model with simulated data help inform how we
+*parameterize* the model as well as what computational tools we employ.
+A model can be expressed in a number of different, mathematically
+equivalent ways. However, a given computational tool may work best using
+certain parameterizations. When diagnostics suggest it, we may need to
+**reparameterize** our model. Additionally, while we would like to use
+Stan for estimation, in no small part because it has built in
+diagnostics, it is possible we may need to depart and use a different
+computational tool for a given model.
 
-HMC has built-in diagnostics.
+To summarize, we need to:
 
-#### Reparameterize
+  - Fit the model on simulated data where we know the true parameter
+    values.
+  - Utilize a number of diagnostics (starting with the HMC diagnostics
+    from Stan) to evaluate the computational tool and its interaction
+    with the model.
+  - Reparameterize the model as needed.
+  - Change computational tools as needed.
+  - Demonstrate parameter recovery for the given model parameterization
+    and computational tool.
 
-#### Evaluate Prior-Posterior Consistency
+#### Example: Multinomial Logit Model Calibration and Evaluation
 
-#### Confirm Parameter Recovery
-
-> “Parameter recovery is an additional calibration that you might
-> require of a model as there are no general guarantees of posterior
-> behavior in Bayesian inference. That said, non- or weak-
-> identifiability can manifest in especially poor calibrations.”
-> -Michael Betancourt
-
-#### Perform Simulation-Based Calibration
+  - HMC Diagnostics
+  - Prior-Posterior Consistency
+  - Simulation-Based Calibration
 
 As a general diagnostic (with or without HMC), we can use
 **simulation-based calibration**. If we simulate from the joint
@@ -330,6 +354,14 @@ Ranks may be the best way to test this self-consistency: ![r =
 "r = \\#\\{\\tilde{\\theta} \< \\tilde{\\theta}^\\prime_n\\}"). This
 should give us a uniform distribution. This is **simulation-based
 calibration** (SBC). It should be obvious when there are problems.
+
+  - Parameter Recovery
+
+> “Parameter recovery is an additional calibration that you might
+> require of a model as there are no general guarantees of posterior
+> behavior in Bayesian inference. That said, non- or weak-
+> identifiability can manifest in especially poor calibrations.”
+> -Michael Betancourt
 
 ### Calibrate the Model with Real Data and Evaluate
 
