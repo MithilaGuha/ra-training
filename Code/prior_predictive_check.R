@@ -43,13 +43,19 @@ tibble(probs) %>%
   ggplot(aes(x = probs)) +
   geom_histogram()
 
+ggsave(
+  "probs_plot.png", 
+  path = here::here("Figures"), 
+  width = 6, height = 3, units = "in"
+)
+
 # # Count of attribute levels in the chosen alternative.
 # library(tidybayes)
-# sim_data %>% 
-#   spread_draws(Y[n], X[n][p, l]) %>% 
-#   filter(Y == p) %>% 
-#   group_by(l) %>% 
-#   summarize(sum_x = sum(X)) %>% 
+# sim_data %>%
+#   spread_draws(Y[n], X[n][p, l]) %>%
+#   filter(Y == p) %>%
+#   group_by(l) %>%
+#   summarize(sum_x = sum(X)) %>%
 #   ggplot(aes(x = as.factor(l), y = sum_x)) +
 #   geom_col() +
 #   labs(
