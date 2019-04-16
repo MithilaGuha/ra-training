@@ -45,11 +45,11 @@ The summary statistic that is most informative for a model of choice is the impl
 
 ### Build a Generative Model
 
-Next, we translate the simplest expression of the conceptual model into a mathematical specification. The full model includes both the likelihood $p(y|\theta)$ (i.e., the data generating process) and the prior $p(\theta)$. We start simple so we can build the model by adding complexity as needed. This is encoded by adding the `parameters` and `model` blocks in Stan. The specified model can be compared with competing models to build evidence for and against the motivating theory. In this way we can view science as a sequence of models that serve as evidence in continuously revising and updating theory.
+Next, we translate the simplest expression of the conceptual model into a mathematical specification. The full model includes both the likelihood $p(y|\theta)$ (i.e., the data generating process) and the prior $p(\theta)$. We start simple both because we would prefer a simpler model if it performs just as well as a complicated model and because we can build the model by adding complexity as needed. This is encoded by adding the `parameters` and `model` blocks in Stan. The specified model can be compared with competing models to build evidence for and against the motivating theory. In this way we can view science as a sequence of models that serve as evidence in continuously revising and updating theory.
 
 #### Example: Multinomial Logit
 
-The translation of the simplest expression of our conceptual choice model into a mathethematical specification yields a multinomial logit model. The multinomial logit is a regression where the response variable can take on more than one discrete value (e.g., the chosen alternative). This is a generalization of the logit model. We are also simplifying things by assuming an aggregate (i.e., non-hierarchical) model, meaning every consumer gets the same utility from every attribute level. It's a stupid assumption, but simplifying assumptions usually are. Here's the Stan code:
+The translation of the simplest expression of our conceptual choice model into a mathethematical specification yields a multinomial logit model. The multinomial logit is a regression where the response variable can take on more than one discrete value (e.g., the chosen alternative). It is a generalization of the logit model. We are also simplifying things by assuming an aggregate (i.e., non-hierarchical) model, meaning every consumer gets the same utility from every attribute level. It's a stupid assumption, but simplifying assumptions usually are. Here's the Stan code:
 
 ```{stan, output.var = "example", eval = FALSE}
 // Observed choices and the experimental design.
@@ -83,7 +83,7 @@ model {
 
 ### Perform Prior Predictive Checks
 
-Now that we've built the (simple) model, we need to ensure that the specified model is performing as expected (i.e., that it is consistent with our domain expertise). Specifically, we need to be sure that the prior and likelihood are *interacting* as expected, something impossible to determine by just looking at the model specification. To do this, we need to perform **prior predictive checks**, *prior* because this is before we have data and *predictive* because we're considering what the model as specified would predict:
+Now that we've built the (simple) model, we need to ensure that the specified model will perform as expected (i.e., that it is consistent with our domain expertise). Specifically, we need to be sure that the prior and likelihood are *interacting* as expected, something impossible to determine by just looking at the model specification. To do this, we need to perform **prior predictive checks**, *prior* because this is before we have data and *predictive* because we're considering what the model as specified would predict.
 
 - Draw parameter values from the prior $\tilde{\theta} \sim p(\theta)$.
 - Draw data from the likelihood parameterized by the draws of the parameter values $\tilde{y} \sim p(y|\tilde{\theta})$.
@@ -94,8 +94,8 @@ The resulting **prior predictive distribution** should be plausible based on you
 
 Note that we could also simulate data just using R. However, simulating data using Stan does a few things for us.
 
-- We will be using Stan to estimate the model, so we reduce duplicating efforts by keeping the simulation in stan.
-- Some of the distributions we'll want to use (e.g., the LKJ distribution) don't exist natively outside Stan.
+- If we can, we will use Stan to estimate the model, so we reduce duplicating efforts by keeping the simulation in Stan.
+- Some of the distributions we'll want to use (e.g., the LKJ distribution) don't exist natively outside Stan, again duplicating efforts.
 
 #### Example: Multinomial Logit Prior Predictive Check
 
@@ -162,7 +162,7 @@ sim_data <- stan(
 )
 ```
 
-We can now extract the simulated data to perform the prior predictive check.
+We can now extract the simulated data to perform the prior predictive check and produce the prior predictive distribution.
 
 Here, we are computing the implied choice probabilities using the experimental design `X` and the parameters `B`. Note that in this instance summaring the data `Y` is not informative; we are summarizing the data `X` and parameters `B` combined to produce the underlying, implied choice probabilities that produce `Y`.
 
@@ -189,15 +189,15 @@ tibble(probs) %>%
 
 ![](Figures/probs_plot.png)
 
-There isn't a spike at a probability of 1, so our prior of `B ~ normal(0, 1)` combined with the multinomial logit likelihood does not produce dominating alternatives. This part of the workflow typically requires some iteration, since the ways in which the prior and likelihood can combine aren't always obvious.
+The prior predictive distribution doesn't have a spike at probability of 1, so our prior of `B ~ normal(0, 1)` combined with the multinomial logit likelihood does not produce dominating alternatives. This part of the workflow typically requires some iteration, since the ways in which the prior and likelihood can combine aren't obvious.
 
 ### Calibrate the Model with Simulated Data and Evaluate
 
-Once we have completed iterating through our prior predictive check and have decided on a fully specified generative model that accurately reflects our domain expertise, we are ready to calibrate (i.e., estimate or fit) the model. An underlying question at this point in our workflow is whether our computational tools (e.g., Stan) are sufficient to accurately fit the model. The more complex our model becomes, the more this will be of concern.
+Once we have completed iterating through our prior predictive check and have decided on a fully specified generative model that accurately reflects our domain expertise, we are ready to *calibrate* (i.e., *estimate* or *fit*) the model. An underlying question at this point in our workflow is whether our computational tools (e.g., Stan) are sufficient to accurately fit the model. The more complex our model becomes, the more this will be of concern.
 
-Before calibrating the model with actual data where we can easily confound the model's performance with the performance of the computational tools, we first confirm that the model and estimation routine are performing as expected by calibrating the model using simulated data. With simulated data, we know the underlying truth and can focus entirely on evaluating the estimation procedure and demonstrating parameter recovery.
+Before calibrating the model with actual data where we can easily confound the model's performance on the given data with the performance of the computational tools, we first confirm that the model and estimation routine are performing as expected by calibrating the model using simulated data. With simulated data, we know the underlying truth and can focus entirely on evaluating the estimation procedure and demonstrating parameter recovery.
 
-Just as we used the prior predictive check as a diagnostic to help set priors and specify the likelihood, so too will our evaluation of calibrating the model with simulated data help inform how we *parameterize* the model as well as what computational tools we employ. A model can be expressed in a number of different, mathematically equivalent ways. However, a given computational tool may work best using certain parameterizations. When diagnostics suggest it, we may need to **reparameterize** our model. Additionally, while we would like to use Stan for estimation, in no small part because it has built in diagnostics, it is possible we may need to depart and use a different computational tool for a given model.
+Just as we used the prior predictive check as a diagnostic to help set priors and specify the likelihood, so too will our evaluation of calibrating the model with simulated data help inform how we *parameterize* the model as well as what computational tools we employ. A model can be expressed in a number of different, mathematically equivalent ways. However, a given computational tool may work best using certain parameterizations. Thus, when diagnostics suggest it, we may need to **reparameterize** our model. Additionally, while we would like to use Stan for estimation, in no small part because it has built in diagnostics, it is possible we may need to depart and use a different computational tool for a given model.
 
 To summarize, we need to:
 
@@ -207,7 +207,35 @@ To summarize, we need to:
 - Change computational tools as needed.
 - Demonstrate parameter recovery for the given model parameterization and computational tool.
 
-#### Example: Multinomial Logit Model Calibration and Evaluation
+This step of calibrating the model with simulated data and then evaluating can be referred to collectively as a **simulation experiment**.
+
+#### Example: Multinomial Logit Model Simulation Experiment
+
+We already have a number of simulated datasets from our prior predictive check. Let's start with using just one of them for calibration. We also have the model specified, which we can call from R.
+
+```{r, eval = FALSE}
+# Extract the data from the first simulated dataset.
+Y <- extract(sim_data)$Y[1,]
+X <- extract(sim_data)$X[1,,,]
+
+# Specify the data for calibration in a list.
+data <- list(
+  N = length(Y),           # Number of observations.
+  P = nrow(X[1,,]),        # Number of product alternatives.
+  L = ncol(X[1,,]),        # Number of (estimable) attribute levels.
+  Y = Y,                   # Vector of observed choices.
+  X = X                    # Experimental design for each observations.
+)
+
+# Calibrate the model.
+fit <- stan(
+  file = here::here("Code", "mnl_estimate.stan"),
+  data = data,
+  seed = 42
+)
+```
+
+Note that we are using the defaults for the number of post-warmup iterations (i.e., 2,000), warmup iterations (i.e., half the post-warmup iterations, so 1,000), and the number of chains (i.e., 4). Once the model has run, we can now take advantage of Stan's built-in diagnostics.
 
 - HMC Diagnostics
 - Prior-Posterior Consistency

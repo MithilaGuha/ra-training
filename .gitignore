@@ -3,6 +3,9 @@ Output/*
 Readings/*
 Temporary/*
 
+# Files
+Data/sim_data.RDS
+
 # R Stuff
 .Rproj.user
 .Rhistory
